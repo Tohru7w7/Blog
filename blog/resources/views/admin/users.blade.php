@@ -10,6 +10,20 @@
       </button>
     </div>
 </div>
+@if(session('success'))
+  <div class="alert alert-success">
+    {{ session('success') }}
+  </div>
+@endif
+@if($errors->any())
+  <div class="alert alert-danger">
+    <ul>
+      @foreach($errors->all() as $error)
+        <li>{{ $error }}</li>
+      @endforeach
+    </ul>
+  </div>
+@endif
 
 <div class="p-4"></div>
 <table class="table">
@@ -18,6 +32,7 @@
       <th scope="col">#</th>
       <th scope="col">Imagen</th>
       <th scope="col">Nombre</th>
+      <th scope="col">Nickname</th>
       <th scope="col">Email</th>
       <th scope="col">Password</th>
       <th scope="col"></th>
@@ -29,11 +44,14 @@
             <td>{{$item -> id}}</td>
             <td>{{$item -> img}}</td>
             <td>{{$item -> name}}</td>
+            <td>{{$item -> nickname}}</td>
             <td>{{$item -> email}}</td>
             <td>**********</td>
             <td>
-                <button>
-
+                <button class="btn btn-danger btnEliminar" 
+                data-id="{{ $item->id }}"
+                data-toggle="modal" data-target="#modalDelete">
+                <i class="a fa-trash"></i>
                 </button>
             </td>
             
@@ -47,7 +65,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLabel">MAgregar</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -57,19 +75,23 @@
       <div class="modal-body">
         <form><div class="form-group">
     <label for="name">Nombre</label>
-    <input type="text" class="form-control" id="name" aria-describedby="emailHelp">
+    <input value="{{ old('name') }}" name="name" type="text" class="form-control" id="name" aria-describedby="emailHelp">
+  </div>
+  <form><div class="form-group">
+    <label for="nickname">Nickname</label>
+    <input value="{{ old('nickname') }}" name="nickname" type="text" class="form-control" id="name" aria-describedby="emailHelp">
   </div>
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    <input value="{{ old('email') }}" name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
   </div>
   <div class="form-group">
     <label for="pass">Pasword</label>
-    <input type="password" class="form-control" id="password" aria-describedby="emailHelp">
+    <input name="pass" type="password" class="form-control" id="password" aria-describedby="emailHelp">
   </div>
   <div class="form-group">
     <label for="pass1">Confirmar Contraseña</label>
-    <input type="password" class="form-control" id="password1" aria-describedby="emailHelp">
+    <input name="pass1" type="password" class="form-control" id="password1" aria-describedby="emailHelp">
   </div>
       </div>
       <div class="modal-footer">
@@ -81,9 +103,39 @@
   </div>
 </div>
 
+<!-- Modal Delete -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Agregar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/dashboard/users" method="POST">
+        @csrf
+      <div class="modal-body">
+        <h2>¿Deseas eliminar el registro?</h2>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Eliminar</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 @endsection
 @section('scripts')
     <script>
         //alert("Hola")
+        $(document).ready(function(){
+          $(".btnEliminar").on('click',function(event){
+              var id= $(this).data('id')
+                alert(id)
+          });
+        });
     </script>
 @endsection
